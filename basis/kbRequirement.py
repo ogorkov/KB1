@@ -1,10 +1,4 @@
 
-import todo as todo
-###
-todo: one thing or another
-todo another thing or one 
-###
-
 class kbRequirement(object):
     """
     Basic requirement class
