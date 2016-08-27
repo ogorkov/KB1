@@ -1,3 +1,4 @@
+import sqlite3
 
 class kbRequirement(object):
     """
@@ -5,8 +6,20 @@ class kbRequirement(object):
 
     """
     def __init__(self):
-        self.reqId = None
+        self.reqId = 0
         self.tags = []
+        self.description = ""
+        self.__description = ""
+
+    def loadRequirement(self, cur: sqlite3.Cursor, rid: int):
+        cur.execute('SELECT description FROM requirements WHERE reqId = ?', str(rid))
+        if rid > 0:
+            self.reqId = rid
+            self.description = str(cur.fetchone()[0])
+            self.__description = self.description
+
+    def rollback(self):
+        self.description = self.__description
 
     def addTag(self, tag):
         """

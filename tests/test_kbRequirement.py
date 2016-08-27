@@ -47,18 +47,32 @@ class addTagTests(unittest.TestCase):
 
 con = sqlite3.connect("test.dba")
 cur = con.cursor()
-# cur.execute('CREATE TABLE requirements (reqId INTEGER PRIMARY KEY, title VARCHAR(100), description VARCHAR(30))')
+cur.execute('CREATE TABLE IF NOT EXISTS requirements (reqId INTEGER PRIMARY KEY, title VARCHAR(100), description VARCHAR(30))')
 cur.execute('INSERT INTO requirements VALUES (1, "title","lalalala"), (2, "title2", "ne nado lala")')
+
 
 class descriptionTests(unittest.TestCase):
     def test_loadDescription(self):
-        cur.execute('SELECT description FROM requirements WHERE reqId = 1')
-
         a = basis.kbRequirement.kbRequirement()
-        a.description = cur.fetchone()[0]
+        a.loadRequirement(cur, 1)
         var = "lalalala"
         self.assertEquals(a.description, var)
 
+    def test_loadOneMoreDescription(self):
+        a = basis.kbRequirement.kbRequirement()
+        a.loadRequirement(cur, 2)
+        var = "ne nado lala"
+        self.assertEquals(a.description, var)
+
+    def test_rollbackDescription(self):
+        a = basis.kbRequirement.kbRequirement()
+        a.loadRequirement(cur, 1)
+        a.description = "new description hahaha"
+        a.rollback()
+        var = "lalalala"
+        self.assertEquals(a.description, var)
+
+    """
     def test_loadDescription2(self):
         cur.execute('SELECT description FROM requirements WHERE reqId = 2')
 
@@ -68,7 +82,13 @@ class descriptionTests(unittest.TestCase):
         self.assertEquals(a.description, var)
 
     def test_rollbackDescription(self):
+        cur.execute('SELECT description FROM requirements WHERE reqId = 2')
 
+        a = basis.kbRequirement.kbRequirement()
+        a.description = cur.fetchone()[0]
+        var = "ne nado lala"
+        self.assertEquals(a.description, var)
+"""
 
 if __name__ == '__main__':
 
